@@ -10,16 +10,28 @@ tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(model_id, load_in_4bit=True, device_map="auto")
 
 model = prepare_model_for_kbit_training(model)
-config = LoraConfig(r=8, lora_alpha=16, target_modules=["q_proj", "v_proj"], lora_dropout=0.05, bias="none", task_type="CAUSAL_LM")
+config = LoraConfig(
+    r=8,
+    lora_alpha=16,
+    target_modules=["q_proj", "v_proj"],
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM"
+)
 model = get_peft_model(model, config)
 
 dataset = load_dataset("json", data_files=dataset_path, split="train")
 
 def tokenize(sample):
-    return tokenizer(sample["prompt"] + "
-" + sample["response"], truncation=True)
+    return tokenizer(
+        sample["prompt"] + "\n" + sample["response"],
+        truncation=True,
+        max_length=512,
+        padding="max_length"
+    )
 
 tokenized = dataset.map(tokenize)
+
 args = TrainingArguments(
     output_dir="./outputs",
     per_device_train_batch_size=1,
@@ -28,6 +40,7 @@ args = TrainingArguments(
     logging_steps=10,
     save_strategy="epoch",
     report_to="none"
+    fp16=True, # Descomenta si tu GPU lo soporta
 )
 
 trainer = Trainer(model=model, args=args, train_dataset=tokenized)
