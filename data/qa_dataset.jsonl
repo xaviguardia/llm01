@@ -1,0 +1,2 @@
+{"prompt": "¿Cómo se realiza el login biométrico en Android?", "response": "Usamos BiometricPrompt desde AndroidX, con una implementación segura en LoginViewModel."}
+{"prompt": "¿Qué hace el interceptor de seguridad en las peticiones HTTP?", "response": "El SecurityInterceptor añade cabeceras con tokens JWT y encripta algunos parámetros sensibles."}
