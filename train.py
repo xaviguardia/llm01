@@ -39,7 +39,7 @@ args = TrainingArguments(
     num_train_epochs=3,
     logging_steps=10,
     save_strategy="epoch",
-    report_to="none"
+    report_to="none",
     fp16=True, # Descomenta si tu GPU lo soporta
 )
 
